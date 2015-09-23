@@ -2,16 +2,16 @@
 
 from nose.tools import with_setup
 
-import leapcloud
-from leapcloud import User
-from leapcloud import Query
-from leapcloud import File
+import ML
+from ML import User
+from ML import Query
+from ML import File
 
 __author__ = 'czhou <czhou@ilegendsoft.com>'
 
 
 def setup_func():
-    leapcloud.init(
+    ML.init(
         '55d1480960b2430132e9b19e',
         master_key='YURucS1ZcVUtS0w4Qmh4MW5IVWdFdw',
     )

@@ -6,10 +6,10 @@ import base64
 import cStringIO
 import StringIO
 
-import leapcloud
-from leapcloud import client
-from leapcloud import utils
-from leapcloud.mime_type import mime_types
+import ML
+from ML import client
+from ML import utils
+from ML.mime_type import mime_types
 
 
 __author__ = 'czhou <czhou@ilegendsoft.com>'
@@ -79,8 +79,8 @@ class File(object):
         return self._acl
 
     def set_acl(self, acl):
-        if not isinstance(acl, leapcloud.ACL):
-            raise TypeError('acl must be a leapcloud.ACL instance')
+        if not isinstance(acl, ML.ACL):
+            raise TypeError('acl must be a ML.ACL instance')
         self._acl = acl
 
     @property

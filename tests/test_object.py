@@ -5,15 +5,15 @@ from nose.tools import ok_
 from nose.tools import eq_
 from nose.tools import assert_raises
 
-import leapcloud
-from leapcloud import operation
-from leapcloud import Object
+import ML
+from ML import operation
+from ML import Object
 
 __author__ = 'czhou <czhou@ilegendsoft.com>'
 
 
 def setup_func():
-    leapcloud.init(
+    ML.init(
         '55d1480960b2430132e9b19e',
         'T2N5aGQxY25vLU9EMkJkdFNSQVY1dw',
     )
@@ -201,7 +201,7 @@ def test_fetch():
     band = Band(name='Nightwish')
     album.set('parent', band)
     album.save()
-    query = leapcloud.Query(Album)
+    query = ML.Query(Album)
     album = query.get(album.id)
     assert album.get('parent').get('name') is None
 
@@ -220,7 +220,7 @@ def test_has():
 
 
 def test_get_set_acl():
-    acl = leapcloud.ACL()
+    acl = ML.ACL()
     album = Album()
     album.set_acl(acl)
     assert album.get_acl() == acl

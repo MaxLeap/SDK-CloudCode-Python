@@ -2,15 +2,15 @@
 
 from nose.tools import with_setup
 
-import leapcloud
-from leapcloud import Object
-from leapcloud import Relation
+import ML
+from ML import Object
+from ML import Relation
 
 __author__ = 'czhou <czhou@ilegendsoft.com>'
 
 
 def setup_func():
-    leapcloud.init(
+    ML.init(
         '55d1480960b2430132e9b19e',
         'T2N5aGQxY25vLU9EMkJkdFNSQVY1dw',
     )
@@ -43,7 +43,7 @@ def test_query_relation():
     relation.add(band2)
     album.save()
 
-    album = leapcloud.Query('Album').get(album.id)
+    album = ML.Query('Album').get(album.id)
     relation = album.relation('band')
     bands = relation.query().find()
     assert band1.id in [x.id for x in bands]

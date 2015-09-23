@@ -1,7 +1,7 @@
-leapcloud.client module
+ML.fields module
 =======================
 
-.. automodule:: leapcloud.client
+.. automodule:: ML.fields
     :members:
     :undoc-members:
     :show-inheritance:

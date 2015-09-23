@@ -1,7 +1,7 @@
-leapcloud.object_ module
+ML.object_ module
 ========================
 
-.. automodule:: leapcloud.object_
+.. automodule:: ML.object_
     :members:
     :undoc-members:
     :show-inheritance:

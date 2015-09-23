@@ -1,7 +1,7 @@
 # coding: utf-8
 
-import leapcloud
-from leapcloud import operation
+import ML
+from ML import operation
 
 __author__ = 'czhou <czhou@ilegendsoft.com>'
 
@@ -20,9 +20,9 @@ class Relation(object):
         :param parent_class: 父类名称
         :param relation_key: 父类中 Relation 的字段名
         :param child: 子类对象
-        :return: leapcloud.Query
+        :return: ML.Query
         """
-        q = leapcloud.Query(parent_class)
+        q = ML.Query(parent_class)
         q.equal_to(relation_key, child._to_pointer())
         return q
 
@@ -39,7 +39,7 @@ class Relation(object):
 
     def add(self, *obj_or_objs):
         """
-        添加一个新的 leapcloud.Object 至 Relation。
+        添加一个新的 ML.Object 至 Relation。
 
         :param obj_or_objs: 需要添加的对象或对象列表
         """
@@ -52,7 +52,7 @@ class Relation(object):
 
     def remove(self, *obj_or_objs):
         """
-        从一个 Relation 中删除一个 leapcloud.Object 。
+        从一个 Relation 中删除一个 ML.Object 。
 
         :param obj_or_objs: 需要删除的对象或对象列表
         :return:
@@ -74,16 +74,16 @@ class Relation(object):
         """
         获取指向 Relation 内容的 Query 对象。
 
-        :rtype: leapcloud.Query
+        :rtype: ML.Query
         """
 
         if self.target_class_name is None:
-            target_class = leapcloud.Object.extend(self.parent._class_name)
-            query = leapcloud.Query(target_class)
+            target_class = ML.Object.extend(self.parent._class_name)
+            query = ML.Query(target_class)
             query._extra['redirectClassNameForKey'] = self.key
         else:
-            target_class = leapcloud.Object.extend(self.target_class_name)
-            query = leapcloud.Query(target_class)
+            target_class = ML.Object.extend(self.target_class_name)
+            query = ML.Query(target_class)
 
         query._add_condition('$relatedTo', 'object', self.parent._to_pointer())
         query._add_condition('$relatedTo', 'key', self.key)

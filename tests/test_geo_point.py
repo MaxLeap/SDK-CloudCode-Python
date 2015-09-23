@@ -3,7 +3,7 @@
 from nose.tools import assert_raises
 from nose.tools import eq_
 
-from leapcloud import GeoPoint
+from ML import GeoPoint
 
 
 __author__ = 'czhou <czhou@ilegendsoft.com>'

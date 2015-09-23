@@ -3,9 +3,9 @@ from datetime import datetime
 from nose.tools import eq_
 from nose.tools import with_setup
 
-import leapcloud
-from leapcloud import Query
-from leapcloud import Object
+import ML
+from ML import Query
+from ML import Object
 
 __author__ = 'czhou <czhou@ilegendsoft.com>'
 
@@ -18,7 +18,7 @@ game_scores = []
 
 
 def setup_func():
-    leapcloud.init(
+    ML.init(
         '55d1480960b2430132e9b19e',
         'T2N5aGQxY25vLU9EMkJkdFNSQVY1dw',
     )
@@ -139,8 +139,8 @@ def test_pointer_query():
     assert len(q.find()) == 1
 
 def test_matches_query():
-    inner_query = leapcloud.Query('Post')
+    inner_query = ML.Query('Post')
     inner_query.exists("image")
-    query = leapcloud.Query('Comment')
+    query = ML.Query('Comment')
     query.matches_query("post", inner_query)
     assert query.dump() == {'where': {'post': {'$inQuery': {'className': 'Post', 'where': {'image': {'$exists': True}}}}}}

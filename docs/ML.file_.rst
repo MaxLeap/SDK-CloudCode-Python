@@ -1,7 +1,7 @@
-leapcloud.query module
+ML.file_ module
 ======================
 
-.. automodule:: leapcloud.query
+.. automodule:: ML.file_
     :members:
     :undoc-members:
     :show-inheritance:

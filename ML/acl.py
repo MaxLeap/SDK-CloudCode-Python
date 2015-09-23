@@ -1,6 +1,6 @@
 # coding: utf-8
 
-import leapcloud
+import ML
 
 __author__ = 'czhou <czhou@ilegendsoft.com>'
 
@@ -16,9 +16,9 @@ class ACL(object):
         return self.permissions_by_id
 
     def _set_access(self, access_type, user_id, allowed):
-        if isinstance(user_id, leapcloud.User):
+        if isinstance(user_id, ML.User):
             user_id = user_id.id
-        elif isinstance(user_id, leapcloud.Role):
+        elif isinstance(user_id, ML.Role):
             user_id = 'role:' + user_id.get_name()
         permissions = self.permissions_by_id.get(user_id)
         if permissions is None:
@@ -35,9 +35,9 @@ class ACL(object):
                 del self.permissions_by_id[user_id]
 
     def _get_access(self, access_type, user_id):
-        if isinstance(user_id, leapcloud.User):
+        if isinstance(user_id, ML.User):
             user_id = user_id.id
-        elif isinstance(user_id, leapcloud.Role):
+        elif isinstance(user_id, ML.Role):
             user_id = 'role:' + user_id.get_name()
         permissions = self.permissions_by_id[user_id]
         if not permissions:
@@ -69,29 +69,29 @@ class ACL(object):
         return self.get_write_access(PUBLIC_KEY)
 
     def set_role_read_access(self, role, allowed):
-        if isinstance(role, leapcloud.Role):
+        if isinstance(role, ML.Role):
             role = role.get_name()
         if not isinstance(role, basestring):
-            raise TypeError('role must be a leapcloud.Role or str')
+            raise TypeError('role must be a ML.Role or str')
         self.set_read_access('role:{0}'.format(role), allowed)
 
     def get_role_read_access(self, role):
-        if isinstance(role, leapcloud.Role):
+        if isinstance(role, ML.Role):
             role = role.get_name()
         if not isinstance(role, basestring):
-            raise TypeError('role must be a leapcloud.Role or str')
+            raise TypeError('role must be a ML.Role or str')
         self.get_read_access('role:{0}'.format(role))
 
     def set_role_write_access(self, role, allowed):
-        if isinstance(role, leapcloud.Role):
+        if isinstance(role, ML.Role):
             role = role.get_name()
         if not isinstance(role, basestring):
-            raise TypeError('role must be a leapcloud.Role or str')
+            raise TypeError('role must be a ML.Role or str')
         self.set_write_access('role:{0}'.format(role), allowed)
 
     def get_role_write_access(self, role):
-        if isinstance(role, leapcloud.Role):
+        if isinstance(role, ML.Role):
             role = role.get_name()
         if not isinstance(role, basestring):
-            raise TypeError('role must be a leapcloud.Role or str')
+            raise TypeError('role must be a ML.Role or str')
         self.get_write_access('role:{0}'.format(role))

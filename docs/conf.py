@@ -48,7 +48,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'LeapCloud-Python-SDK'
+project = u'MaxLeap-Python-SDK'
 copyright = u'2015, czhou'
 author = u'czhou'
 
@@ -202,7 +202,7 @@ html_static_path = ['_static']
 #html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'LeapCloud-Python-SDKdoc'
+htmlhelp_basename = 'MaxLeap-Python-SDKdoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -224,7 +224,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  (master_doc, 'LeapCloud-Python-SDK.tex', u'LeapCloud-Python-SDK Documentation',
+  (master_doc, 'MaxLeap-Python-SDK.tex', u'MaxLeap-Python-SDK Documentation',
    u'czhou', 'manual'),
 ]
 
@@ -254,7 +254,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'leapcloud-python-sdk', u'LeapCloud-Python-SDK Documentation',
+    (master_doc, 'maxleap-python-sdk', u'MaxLeap-Python-SDK Documentation',
      [author], 1)
 ]
 
@@ -268,8 +268,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  (master_doc, 'LeapCloud-Python-SDK', u'LeapCloud-Python-SDK Documentation',
-   author, 'LeapCloud-Python-SDK', 'One line description of project.',
+  (master_doc, 'MaxLeap-Python-SDK', u'MaxLeap-Python-SDK Documentation',
+   author, 'MaxLeap-Python-SDK', 'One line description of project.',
    'Miscellaneous'),
 ]
 

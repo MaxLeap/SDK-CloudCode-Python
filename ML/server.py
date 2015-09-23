@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import os
-import leapcloud
+import ML
 import json
 import logging
 import traceback
@@ -17,27 +17,27 @@ app = Flask(__name__)
 
 @app.after_request
 def after_request(response):
-    leapcloud.Log.debug("===========Request End===============")
+    ML.Log.debug("===========Request End===============")
     return response
 
 @app.before_request
 def before_request():
-    leapcloud.Log.debug("===========Request Start=============")
-    leapcloud.Log.debug("Method:{0}".format(request.method))
-    leapcloud.Log.debug("Headers:\n{0}".format(request.headers))
-    leapcloud.Log.debug("Body:{0}".format(request.data))
+    ML.Log.debug("===========Request Start=============")
+    ML.Log.debug("Method:{0}".format(request.method))
+    ML.Log.debug("Headers:\n{0}".format(request.headers))
+    ML.Log.debug("Body:{0}".format(request.data))
 
 @app.errorhandler(500)
 def custom_error(e):
-    if isinstance(e, leapcloud.LeapCloudError):
-        leapcloud.Log.error(e)
+    if isinstance(e, ML.MaxLeapError):
+        ML.Log.error(e)
         return Response(
             json.dumps({"errorCode":e.code,"errorMessage":e.error}),
             status=545,
             mimetype='application/json'
         )
     traces_info = traceback.format_exc()
-    leapcloud.Log.error(traces_info)
+    ML.Log.error(traces_info)
     return Response(
         traces_info,
         status=545,
@@ -93,7 +93,7 @@ class flask_base_server(object):
 
     def Function(self, func):
         def _deco():
-            leapcloud.by_hook(False)
+            ML.by_hook(False)
             return func(request)
 
         self._function_map[func.__name__] = _deco
@@ -107,7 +107,7 @@ class flask_base_server(object):
 
     def Job(self, func):
         def _deco():
-            leapcloud.by_hook(False)
+            ML.by_hook(False)
             return func(request)
 
         self._job_map[func.__name__] = _deco
@@ -123,11 +123,11 @@ class flask_base_server(object):
         hook_name = '{}_{}'.format(hook_name, class_name)
         def _deco(func):
             def __deco():
-                leapcloud.by_hook(True)
+                ML.by_hook(True)
                 method = request.json['method']
                 params = request.json['params']
                 res = self._handel_hook(class_name, method, params)
-                leapcloud.by_hook(False)
+                ML.by_hook(False)
                 return res
 
             self._hook_map[hook_name] = func
@@ -146,7 +146,7 @@ class flask_base_server(object):
     def _handel_hook(self, class_name, method, params):
 
         if method == 'create':
-            obj = leapcloud.Object.create(class_name,**params)
+            obj = ML.Object.create(class_name,**params)
 
             if 'before_save_{}'.format(class_name) in self._hook_map:
                 hook_res = self._hook_map['before_save_{}'.format(class_name)](obj)
@@ -169,7 +169,7 @@ class flask_base_server(object):
             attrs = {}
             attrs['objectId'] = params['objectId']
             attrs.update(params['update'])
-            obj = leapcloud.Object.create(class_name,**attrs)
+            obj = ML.Object.create(class_name,**attrs)
             obj.save()
             res = Response(json.dumps({
                 "updatedAt":"{}.{}Z".format(obj.updated_at.strftime('%Y-%m-%dT%H:%M:%S'),obj.updated_at.microsecond/1000),
@@ -183,7 +183,7 @@ class flask_base_server(object):
                 if isinstance(hook_res, Response):return hook_res
 
         elif method == 'delete':
-            obj = leapcloud.Object.create(class_name,**params)
+            obj = ML.Object.create(class_name,**params)
             if 'before_delete_{}'.format(class_name) in self._hook_map:
                 hook_res = self._hook_map['before_delete_{}'.format(class_name)](obj)
                 if isinstance(hook_res, Response): return hook_res
@@ -199,14 +199,14 @@ class flask_base_server(object):
                 hook_res = self._hook_map['after_delete_{}'.format(class_name)](obj)
                 if isinstance(hook_res, Response): return hook_res
         else:
-            raise leapcloud.LeapCloudError(501, "Unknown method [{}]".format(method))
+            raise ML.MaxLeapError(501, "Unknown method [{}]".format(method))
         if isinstance(res,Response):
             return res
         else:
-            raise leapcloud.LeapCloudError(510, "hook didn't return an Response Object")
+            raise ML.MaxLeapError(510, "hook didn't return an Response Object")
 
     def run(self):
-        if leapcloud.DEBUG:
+        if ML.DEBUG:
             self._app.run(host=self._host, port=self._port)
         else:
             raise Runtime('Not Debug Model')

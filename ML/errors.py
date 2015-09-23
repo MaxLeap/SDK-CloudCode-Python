@@ -3,7 +3,7 @@
 __author__ = 'czhou <czhou@ilegendsoft.com>'
 
 
-class LeapCloudError(Exception):
+class MaxLeapError(Exception):
     def __init__(self, code, error):
         self.code = code
         self.error = error

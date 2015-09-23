@@ -1,7 +1,7 @@
-leapcloud.user module
+ML.user module
 =====================
 
-.. automodule:: leapcloud.user
+.. automodule:: ML.user
     :members:
     :undoc-members:
     :show-inheritance:

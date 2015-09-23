@@ -4,9 +4,9 @@ from os import path
 here = path.abspath(path.dirname(__file__))
 
 setup(
-    name='leap-sdk',
-    version='1.0.17',
-    description='LeapCloud Python SDK',
+    name='maxleap-sdk',
+    version='0.1.1',
+    description='MaxLeap Python SDK',
 
     url='https://leap.as/',
 
@@ -25,13 +25,13 @@ setup(
         'Programming Language :: Python :: 2.7',
     ],
 
-    keywords='Leap SDK',
+    keywords='MaxLeap SDK',
 
-    packages=['leapcloud'],
+    packages=['ML'],
 
-    package_dir={'leapcloud':'leapcloud'},
+    package_dir={'ML':'ML'},
 
-    package_data={'leapcloud':['*.py']},
+    package_data={'ML':['*.py']},
 
     test_suite='nose.collector',
 

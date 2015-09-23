@@ -1,7 +1,7 @@
-leapcloud.relation module
+ML.relation module
 =========================
 
-.. automodule:: leapcloud.relation
+.. automodule:: ML.relation
     :members:
     :undoc-members:
     :show-inheritance:

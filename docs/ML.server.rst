@@ -1,7 +1,7 @@
-leapcloud.server module
+ML.server module
 ==============================
 
-leapcloud.server模块为用户提供Cloudcode的注册接口和本地测试接口。
+ML.server模块为用户提供Cloudcode的注册接口和本地测试接口。
 
 .. py:data:: Server
 
@@ -45,7 +45,7 @@ leapcloud.server模块为用户提供Cloudcode的注册接口和本地测试接�
 
     一个hook应该是这样一个函数：
 
-    接受参数为一个 :class:`leapcloud.object_.Object` 对象，返回参数为一个 :class:`Response` 实例或者None
+    接受参数为一个 :class:`ML.object_.Object` 对象，返回参数为一个 :class:`Response` 实例或者None
 
     如果返回值为 :class:`Response` 对象，那么就会短路掉后面的执行流程。
 
@@ -63,7 +63,7 @@ leapcloud.server模块为用户提供Cloudcode的注册接口和本地测试接�
 
     一个hook应该是这样一个函数：
 
-    接受参数为一个 :class:`leapcloud.object_.Object` 对象，返回参数为一个 :class:`Response` 实例或者None
+    接受参数为一个 :class:`ML.object_.Object` 对象，返回参数为一个 :class:`Response` 实例或者None
 
     如果返回值为 :class:`Response` 对象，那么就会短路掉后面的执行流程。
 
@@ -81,7 +81,7 @@ leapcloud.server模块为用户提供Cloudcode的注册接口和本地测试接�
 
     一个hook应该是这样一个函数：
 
-    接受参数为一个 :class:`leapcloud.object_.Object` 对象，返回参数为一个 :class:`Response` 实例或者None
+    接受参数为一个 :class:`ML.object_.Object` 对象，返回参数为一个 :class:`Response` 实例或者None
 
     如果返回值为 :class:`Response` 对象，那么就会短路掉后面的执行流程。
 
@@ -99,7 +99,7 @@ leapcloud.server模块为用户提供Cloudcode的注册接口和本地测试接�
 
     一个hook应该是这样一个函数：
 
-    接受参数为一个 :class:`leapcloud.object_.Object` 对象，返回参数为一个 :class:`Response` 实例或者None
+    接受参数为一个 :class:`ML.object_.Object` 对象，返回参数为一个 :class:`Response` 实例或者None
 
     如果返回值为 :class:`Response` 对象，那么就会短路掉后面的执行流程。
 
@@ -117,7 +117,7 @@ leapcloud.server模块为用户提供Cloudcode的注册接口和本地测试接�
 
     一个hook应该是这样一个函数：
 
-    接受参数为一个 :class:`leapcloud.object_.Object` 对象，返回参数为一个 :class:`Response` 实例或者None
+    接受参数为一个 :class:`ML.object_.Object` 对象，返回参数为一个 :class:`Response` 实例或者None
 
     如果返回值为Response对象，那么就会短路掉后面的执行流程。
 

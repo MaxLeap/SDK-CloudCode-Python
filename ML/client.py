@@ -5,8 +5,8 @@ import json
 import requests
 requests.packages.urllib3.disable_warnings()
 
-import leapcloud
-from leapcloud import utils
+import ML
+from ML import utils
 
 __author__ = 'czhou <czhou@ilegendsoft.com>'
 
@@ -36,7 +36,7 @@ def by_hook(flag):
 
 
 def init(app_id, client_key=None, master_key=None):
-    """初始化 LeapCloud 的 AppId / REST API Key / MasterKey
+    """初始化 MaxLeap 的 AppId / REST API Key / MasterKey
 
     :type app_id: basestring
     :param app_id: 应用的 Application ID
@@ -56,7 +56,7 @@ def init(app_id, client_key=None, master_key=None):
 def need_init(func):
     def new_func(*args, **kwargs):
         if APP_ID is None:
-            raise RuntimeError('LeapCloud SDK must be initialized')
+            raise RuntimeError('MaxLeap SDK must be initialized')
 
         global headers
         if not headers:
@@ -65,7 +65,7 @@ def need_init(func):
             }
         headers['Content-Type'] = 'application/json'
         headers['X-LAS-AppId'] = APP_ID
-        headers['User-Agent'] = 'LeapCloud Code Python-{0}SDK'.format(leapcloud.__version__)
+        headers['User-Agent'] = 'MaxLeap Code Python-{0}SDK'.format(ML.__version__)
         if MASTER_KEY:
             headers['X-LAS-MasterKey'] = MASTER_KEY
         else:
@@ -83,10 +83,10 @@ def check_error(func):
     def new_func(*args, **kwargs):
         response = func(*args, **kwargs)
         if response.headers.get('Content-Type') == 'text/html':
-            raise leapcloud.LeapCloudError(-1, 'Bad Request')
+            raise ML.MaxLeapError(-1, 'Bad Request')
         content = utils.response_to_json(response)
         if 'errorCode' in content:
-            raise leapcloud.LeapCloudError(content.get('errorCode', 1), content.get('errorMessage', 'Unknown Error'))
+            raise ML.MaxLeapError(content.get('errorCode', 1), content.get('errorMessage', 'Unknown Error'))
         return response
     return new_func
 
@@ -94,7 +94,7 @@ def handler_hook(method):
     def _deco(func):
         def new_func(*args, **kwargs):
             global BY_HOOK
-            if leapcloud.PRO or BY_HOOK:
+            if ML.PRO or BY_HOOK:
                 return func(*args, **kwargs)
             else:
                 path = args[0]
@@ -109,24 +109,24 @@ def handler_hook(method):
                 else:
                     return func(*args, **kwargs)
 
-                if class_name not in leapcloud.Server._hook_classes:
+                if class_name not in ML.Server._hook_classes:
                     return func(*args, **kwargs)
 
                 if method == "create":
                     BY_HOOK = True
-                    res = leapcloud.Server._handel_hook(class_name, method, args[1])
+                    res = ML.Server._handel_hook(class_name, method, args[1])
                     BY_HOOK = False
                     return res
 
                 if method == "update":
                     BY_HOOK = True
-                    res = leapcloud.Server._handel_hook(class_name, method, {"update": args[1], "objectId": obj_id})
+                    res = ML.Server._handel_hook(class_name, method, {"update": args[1], "objectId": obj_id})
                     BY_HOOK = False
                     return res
 
                 if method == "delete":
                     BY_HOOK = True
-                    res = leapcloud.Server._handel_hook(class_name, method, {"objectId": obj_id})
+                    res = ML.Server._handel_hook(class_name, method, {"objectId": obj_id})
                     BY_HOOK = False
                     return res
 

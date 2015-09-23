@@ -1,8 +1,8 @@
 # coding: utf-8
 
-from leapcloud import client
-from leapcloud import Object
-from leapcloud import utils
+from ML import client
+from ML import Object
+from ML import utils
 
 __author__ = 'czhou'
 

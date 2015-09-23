@@ -1,7 +1,7 @@
-leapcloud.role module
+ML.role module
 =====================
 
-.. automodule:: leapcloud.role
+.. automodule:: ML.role
     :members:
     :undoc-members:
     :show-inheritance:

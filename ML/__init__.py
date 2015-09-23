@@ -1,12 +1,12 @@
 # coding: utf-8
 
-"""LeapAs Python SDK
+"""MaxLeap Python SDK
 """
 
 import client
 from .acl import ACL
 from .client import init, by_hook
-from .errors import LeapCloudError
+from .errors import MaxLeapError
 from .file_ import File
 from .geo_point import GeoPoint
 from .object_ import Object
@@ -19,7 +19,7 @@ from .log import Log
 from flask import Response
 
 __author__ = 'czhou <czhou@ilegendsoft.com>'
-__version__ = '1.0.17'
+__version__ = '0.1.1'
 DEBUG = True
 PRO = False
 
@@ -27,7 +27,7 @@ __all__ = [
     'ACL',
     'File',
     'GeoPoint',
-    'LeapCloudError',
+    'MaxLeapError',
     'Object',
     'Query',
     'Relation',

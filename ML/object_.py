@@ -5,10 +5,10 @@ from datetime import datetime
 
 import iso8601
 
-import leapcloud
-from leapcloud import utils
-from leapcloud import client
-from leapcloud import operation
+import ML
+from ML import utils
+from ML import client
+from ML import operation
 
 
 __author__ = 'czhou <czhou@ilegendsoft.com>'
@@ -42,7 +42,7 @@ class Object(object):
 
     def __init__(self, **attrs):
         """
-        创建一个新的 leapcloud.Object
+        创建一个新的 ML.Object
 
         :param attrs: 对象属性
         :return:
@@ -65,7 +65,7 @@ class Object(object):
     @classmethod
     def extend(cls, name):
         """
-        派生一个新的 leapcloud.Object 子类
+        派生一个新的 ML.Object 子类
 
         :param name: 子类名称
         :type name: basestring
@@ -79,7 +79,7 @@ class Object(object):
     @classmethod
     def create(cls, class_name, **attributes):
         """
-        根据参数创建一个 leapcloud.Object 的子类的实例化对象
+        根据参数创建一个 ML.Object 的子类的实例化对象
 
         :param class_name: 子类名称
         :type class_name: basestring
@@ -93,7 +93,7 @@ class Object(object):
     @classmethod
     def create_without_data(cls, id_):
         """
-        根据 objectId 创建一个 leapcloud.Object，代表一个服务器上已经存在的对象。可以调用 fetch 方法来获取服务器上的数据
+        根据 objectId 创建一个 ML.Object，代表一个服务器上已经存在的对象。可以调用 fetch 方法来获取服务器上的数据
 
         :param id_: 对象的 objectId
         :type id_: basestring
@@ -101,7 +101,7 @@ class Object(object):
         :rtype: Object
         """
         if cls is Object:
-            raise RuntimeError('can not call create_without_data on leapcloud.Object')
+            raise RuntimeError('can not call create_without_data on ML.Object')
         obj = cls()
         obj.id = id_
         return obj
@@ -196,7 +196,7 @@ class Object(object):
             for idx, obj in enumerate(unsaved_children):
                 content = response[idx]
                 if content.get('errorCode'):
-                    errors.append(leap.LeapCloudError(content.get('errorCode'), content.get('errorMessage')))
+                    errors.append(leap.MaxLeapError(content.get('errorCode'), content.get('errorMessage')))
                     obj._cancel_save()
                 else:
                     result = obj.parse(content)
@@ -215,7 +215,7 @@ class Object(object):
                     children.append(o)
                 return
 
-            if isinstance(o, leapcloud.File):
+            if isinstance(o, ML.File):
                 if o.url is None and o.id is None:
                     files.append(o)
                 return
@@ -275,7 +275,7 @@ class Object(object):
                 next_changes[key] = op1
 
     def validate(self, attrs):
-        if 'ACL' in attrs and not isinstance(attrs['ACL'], leapcloud.ACL):
+        if 'ACL' in attrs and not isinstance(attrs['ACL'], ML.ACL):
             raise TypeError('acl must be a ACL')
         return True
 
@@ -296,15 +296,15 @@ class Object(object):
         :param attr: 字段名
         :type attr: basestring
         :return: Relation
-        :rtype: leapcloud.Relation
+        :rtype: ML.Relation
         """
         value = self.get(attr)
         if value is not None:
-            if not isinstance(value, leapcloud.Relation):
+            if not isinstance(value, ML.Relation):
                 raise TypeError('field %s is not Relation'.format(attr))
             value._ensure_parent_and_key(self, attr)
             return value
-        return leapcloud.Relation(self, attr)
+        return ML.Relation(self, attr)
 
     def has(self, attr):
         """
@@ -452,7 +452,7 @@ class Object(object):
         返回当前对象的 ACL。
 
         :return: 当前对象的 ACL
-        :rtype: leapcloud.ACL
+        :rtype: ML.ACL
         """
         return self.get('ACL')
 
@@ -460,7 +460,7 @@ class Object(object):
         """
         为当前对象设置 ACL
 
-        :type acl: leapcloud.ACL
+        :type acl: ML.ACL
         :return: 当前对象
         """
 

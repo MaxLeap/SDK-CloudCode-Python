@@ -10,17 +10,17 @@ import arrow
 import iso8601
 from dateutil import tz
 
-import leapcloud
-from leapcloud import operation
+import ML
+from ML import operation
 
 __author__ = 'czhou <czhou@ilegendsoft.com>'
 
 
 def get_dumpable_types():
     return (
-        leapcloud.ACL,
-        leapcloud.GeoPoint,
-        leapcloud.Relation,
+        ML.ACL,
+        ML.GeoPoint,
+        ML.Relation,
         operation.BaseOp,
     )
 
@@ -35,12 +35,12 @@ def encode(value, disallow_objects=False):
             'iso': arrow.get(value, tzinfo).to('utc').format('YYYY-MM-DDTHH:mm:ss.SSS') + 'Z',
         }
 
-    if isinstance(value, leapcloud.Object):
+    if isinstance(value, ML.Object):
         if disallow_objects:
-            raise ValueError('leapcloud.Object not allowed')
+            raise ValueError('ML.Object not allowed')
         return value._to_pointer()
 
-    if isinstance(value, leapcloud.File):
+    if isinstance(value, ML.File):
         if not value.url and not value.id:
             raise ValueError('Tried to save an object containing an unsaved file.')
         return {
@@ -84,7 +84,7 @@ def decode(key, value):
     if _type == 'Pointer':
         value = copy.deepcopy(value)
         class_name = value['className']
-        pointer = leapcloud.Object.create(class_name)
+        pointer = ML.Object.create(class_name)
         if 'createdAt' in value:
             value.pop('__type')
             value.pop('className')
@@ -98,7 +98,7 @@ def decode(key, value):
         class_name = value['className']
         value.pop('__type')
         value.pop('class_name')
-        obj = leapcloud.Object.create(class_name)
+        obj = ML.Object.create(class_name)
         obj._finish_fetch(value, True)
         return obj
 
@@ -106,20 +106,20 @@ def decode(key, value):
         return arrow.get(iso8601.parse_date(value['iso'])).to('local').datetime
 
     if _type == 'GeoPoint':
-        return leapcloud.GeoPoint(latitude=value['latitude'], longitude=value['longitude'])
+        return ML.GeoPoint(latitude=value['latitude'], longitude=value['longitude'])
 
     if key == 'ACL':
-        if isinstance(value, leapcloud.ACL):
+        if isinstance(value, ML.ACL):
             return value
-        return leapcloud.ACL(value)
+        return ML.ACL(value)
 
     if _type == 'Relation':
-        relation = leapcloud.Relation(None, key)
+        relation = ML.Relation(None, key)
         relation.target_class_name = value['className']
         return relation
 
     if _type == 'File':
-        f = leapcloud.File(value['name'])
+        f = ML.File(value['name'])
         meta_data = value.get('metaData')
         if meta_data:
             f._metadata = meta_data
@@ -131,14 +131,14 @@ def decode(key, value):
 def traverse_object(obj, callback, seen=None):
     seen = seen or set()
 
-    if isinstance(obj, leapcloud.Object):
+    if isinstance(obj, ML.Object):
         if obj in seen:
             return
         seen.add(obj)
         traverse_object(obj.attributes, callback, seen)
         return callback(obj)
 
-    if isinstance(obj, (leapcloud.Relation, leapcloud.File)):
+    if isinstance(obj, (ML.Relation, ML.File)):
         return callback(obj)
 
     if isinstance(obj, (list, tuple)):
@@ -161,7 +161,7 @@ def response_to_json(response):
     """
     hack for requests in python 2.6
     """
-    if isinstance(response, leapcloud.Response):
+    if isinstance(response, ML.Response):
         return json.loads(response.data)
 
     content = response.content

@@ -1,7 +1,7 @@
-leapcloud.geo_point module
+ML.mime_type module
 ==========================
 
-.. automodule:: leapcloud.geo_point
+.. automodule:: ML.mime_type
     :members:
     :undoc-members:
     :show-inheritance:

@@ -2,8 +2,8 @@
 
 import copy
 
-import leapcloud
-import leapcloud.utils
+import ML
+import ML.utils
 
 __author__ = 'czhou <czhou@ilegendsoft.com>'
 
@@ -31,7 +31,7 @@ class Set(BaseOp):
         return self._value
 
     def dump(self):
-        return leapcloud.utils.encode(self.value)
+        return ML.utils.encode(self.value)
 
     def _merge(self, previous):
         return self
@@ -100,7 +100,7 @@ class Add(BaseOp):
     def dump(self):
         return {
             '__op': 'Add',
-            'objects': leapcloud.utils.encode(self.objects),
+            'objects': ML.utils.encode(self.objects),
         }
 
     def _merge(self, previous):
@@ -133,7 +133,7 @@ class AddUnique(BaseOp):
     def dump(self):
         return {
             '__op': 'AddUnique',
-            'objects': leapcloud.utils.encode(self.objects),
+            'objects': ML.utils.encode(self.objects),
         }
 
     def _merge(self, previous):
@@ -153,7 +153,7 @@ class AddUnique(BaseOp):
         new = copy.deepcopy(old)
         # TODO: more readable
         for obj in self.objects:
-            if isinstance(obj, leapcloud.Object) and obj.id is not None:
+            if isinstance(obj, ML.Object) and obj.id is not None:
                 for index, another_obj in enumerate(new):
                     if another_obj.id == obj.id:
                         new[index] = obj
@@ -178,7 +178,7 @@ class Remove(BaseOp):
     def dump(self):
         return {
             '__op': 'Remove',
-            'objects': leapcloud.utils.encode(self.objects)
+            'objects': ML.utils.encode(self.objects)
         }
 
     def _merge(self, previous):
@@ -197,8 +197,8 @@ class Remove(BaseOp):
             return []
         new = list(set(old) - set(self.objects))
         for obj in self.objects:
-            if isinstance(obj, leapcloud.Object) and obj.id:
-                new = [x for x in new if not (isinstance(x, leapcloud.Object) and x.id == obj.id)]
+            if isinstance(obj, ML.Object) and obj.id:
+                new = [x for x in new if not (isinstance(x, ML.Object) and x.id == obj.id)]
         return new
 
 
@@ -210,7 +210,7 @@ class Relation(BaseOp):
         self.relations_to_remove = set([self._pointer_to_id(x) for x in removes])
 
     def _pointer_to_id(self, obj):
-        if isinstance(obj, leapcloud.Object):
+        if isinstance(obj, ML.Object):
             if obj.id is None:
                 raise TypeError('cant add an unsaved Object to a relation')
             if self._target_class_name is None:
@@ -224,7 +224,7 @@ class Relation(BaseOp):
     def added(self):
         objs = []
         for obj_id in self.relations_to_add:
-            obj = leapcloud.Object.create(self._target_class_name)
+            obj = ML.Object.create(self._target_class_name)
             obj.id = obj_id
             objs.append(obj)
         return objs
@@ -233,7 +233,7 @@ class Relation(BaseOp):
     def removed(self):
         objs = []
         for obj_id in self.relations_to_remove:
-            obj = leapcloud.Object.create(self._target_class_name)
+            obj = ML.Object.create(self._target_class_name)
             obj.id = obj_id
             objs.append(obj)
         return objs
@@ -286,8 +286,8 @@ class Relation(BaseOp):
 
     def _apply(self, old, obj=None, key=None):
         if obj is None:
-            relation = leapcloud.Relation(obj, key)
-        elif isinstance(old, leapcloud.Relation):
+            relation = ML.Relation(obj, key)
+        elif isinstance(old, ML.Relation):
             if self._target_class_name:
                 if old.target_class_name:
                     if old.target_class_name != self._target_class_name:

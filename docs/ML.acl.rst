@@ -1,7 +1,7 @@
-leapcloud.acl module
+ML.acl module
 ====================
 
-.. automodule:: leapcloud.acl
+.. automodule:: ML.acl
     :members:
     :undoc-members:
     :show-inheritance:

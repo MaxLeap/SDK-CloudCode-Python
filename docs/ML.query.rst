@@ -1,7 +1,7 @@
-leapcloud.utils module
+ML.query module
 ======================
 
-.. automodule:: leapcloud.utils
+.. automodule:: ML.query
     :members:
     :undoc-members:
     :show-inheritance:

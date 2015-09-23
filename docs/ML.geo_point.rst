@@ -1,7 +1,7 @@
-leapcloud.operation module
+ML.geo_point module
 ==========================
 
-.. automodule:: leapcloud.operation
+.. automodule:: ML.geo_point
     :members:
     :undoc-members:
     :show-inheritance:

@@ -5,15 +5,15 @@ from nose.tools import with_setup
 
 import requests
 
-import leapcloud
-from leapcloud import File
-from leapcloud import ACL
+import ML
+from ML import File
+from ML import ACL
 
 __author__ = 'czhou <czhou@ilegendsoft.com>'
 
 
 def setup_func():
-    leapcloud.init(
+    ML.init(
         '55d1480960b2430132e9b19e',
         'T2N5aGQxY25vLU9EMkJkdFNSQVY1dw',
     )

@@ -2,11 +2,11 @@
 
 import json
 
-import leapcloud
-from leapcloud import client
-from leapcloud import utils
-from leapcloud.object_ import Object
-from leapcloud.errors import LeapCloudError
+import ML
+from ML import client
+from ML import utils
+from ML.object_ import Object
+from ML.errors import MaxLeapError
 
 __author__ = 'czhou <czhou@ilegendsoft.com>'
 
@@ -16,7 +16,7 @@ class Query(object):
         """
 
         :param query_class: 要查询的 class 名称或者对象
-        :type query_class: basestring or leapcloud.ObjectMeta
+        :type query_class: basestring or ML.ObjectMeta
         """
         if isinstance(query_class, basestring):
             query_class = Object.extend(query_class)
@@ -96,14 +96,14 @@ class Query(object):
 
         :return: 查询结果
         :rtype: Object
-        :raise: LeapCloudError
+        :raise: MaxLeapError
         """
         params = self.dump()
         params['limit'] = 1
         content = utils.response_to_json(client.get('/classes/{0}'.format(self._query_class._class_name), params))
         results = content['results']
         if not results:
-            raise LeapCloudError(101, 'Object not found')
+            raise MaxLeapError(101, 'Object not found')
         obj = self._new_object()
         obj._finish_fetch(self._process_result(results[0]), True)
         return obj
@@ -139,7 +139,7 @@ class Query(object):
         """
         在服务器上删除所有满足查询条件的对象。
 
-        :raise: LeapCLoudError
+        :raise: MaxLeapError
         """
         result = client.delete('/classes/{0}'.format(self._query_class._class_name), self.dump())
         return result

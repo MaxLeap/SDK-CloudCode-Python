@@ -2,12 +2,12 @@
 
 import re
 
-import leapcloud
+import ML
 
 __author__ = 'czhou <czhou@ilegendsoft.com>'
 
 
-class Role(leapcloud.Object):
+class Role(ML.Object):
     def __init__(self, name, acl):
         super(Role, self).__init__()
         self.set_name(name)

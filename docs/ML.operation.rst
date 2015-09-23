@@ -1,7 +1,7 @@
-leapcloud.mime_type module
+ML.operation module
 ==========================
 
-.. automodule:: leapcloud.mime_type
+.. automodule:: ML.operation
     :members:
     :undoc-members:
     :show-inheritance:

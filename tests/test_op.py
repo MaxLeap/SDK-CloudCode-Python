@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from leapcloud import operation
+from ML import operation
 
 __author__ = 'czhou <czhou@ilegendsoft.com>'
 

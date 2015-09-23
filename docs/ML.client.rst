@@ -1,7 +1,7 @@
-leapcloud.errors module
+ML.client module
 =======================
 
-.. automodule:: leapcloud.errors
+.. automodule:: ML.client
     :members:
     :undoc-members:
     :show-inheritance:
