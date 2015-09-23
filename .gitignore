@@ -56,3 +56,5 @@ target/
 # Editor
 *.swp
 .idea/
+
+run.py

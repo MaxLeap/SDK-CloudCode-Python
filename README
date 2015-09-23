@@ -1,17 +1,17 @@
 # Python-SDK
 
-Leap Python SDK (under development)
+MaxLeap Python SDK (under development)
 
 ## Install
 
 ```bash
-pip install leap-sdk
+pip install maxleap-sdk
 ```
 
 or
 
 ```
-easy_install leap-sdk
+easy_install maxleap-sdk
 ```
 
 Maybe you need the `sudo` prefix depends on you OS environment.
