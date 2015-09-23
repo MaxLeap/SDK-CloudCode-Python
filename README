@@ -23,9 +23,4 @@ cd docs
 make html
 ```
 
-
-## License
-
-License: [GNU LGPL](https://www.gnu.org/licenses/lgpl.html).
-
 Author: czhou (czhou@ilegendsoft.com)
