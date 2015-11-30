@@ -96,7 +96,7 @@ def test_increment():
     album.increment('foo', 1)
     assert album.get('foo') == 2
 
-
+@with_setup(setup_func)
 def test_increment_atfer_save():
     album = Album()
     album.set('foo', 1)
@@ -217,19 +217,6 @@ def test_has():
     album.set('foo', 'bar')
     assert album.has('foo') is True
     assert album.has('bar') is False
-
-
-def test_get_set_acl():
-    acl = ML.ACL()
-    album = Album()
-    album.set_acl(acl)
-    assert album.get_acl() == acl
-
-
-def test_invalid_acl():
-    album = Album()
-    assert_raises(TypeError, album.set, 'ACL', 1)
-    assert_raises(TypeError, album.set_acl, 1)
 
 
 @with_setup(setup_func)

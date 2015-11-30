@@ -18,9 +18,6 @@ __author__ = 'czhou <czhou@ilegendsoft.com>'
 
 def get_dumpable_types():
     return (
-        ML.ACL,
-        ML.GeoPoint,
-        ML.Relation,
         operation.BaseOp,
     )
 
@@ -40,17 +37,6 @@ def encode(value, disallow_objects=False):
             raise ValueError('ML.Object not allowed')
         return value._to_pointer()
 
-    if isinstance(value, ML.File):
-        if not value.url and not value.id:
-            raise ValueError('Tried to save an object containing an unsaved file.')
-        return {
-            '__type': 'File',
-            'id': value.id,
-            'name': value.name,
-            'url': value.url,
-        }
-
-
     if isinstance(value, get_dumpable_types()):
         return value.dump()
 
@@ -61,10 +47,6 @@ def encode(value, disallow_objects=False):
         return  dict([(k, encode(v, disallow_objects)) for k, v in value.iteritems()])
 
     return value
-
-
-
-
 
 def decode(key, value):
     if isinstance(value, get_dumpable_types()):
@@ -105,27 +87,10 @@ def decode(key, value):
     if _type == 'Date':
         return arrow.get(iso8601.parse_date(value['iso'])).to('local').datetime
 
-    if _type == 'GeoPoint':
-        return ML.GeoPoint(latitude=value['latitude'], longitude=value['longitude'])
-
-    if key == 'ACL':
-        if isinstance(value, ML.ACL):
-            return value
-        return ML.ACL(value)
-
     if _type == 'Relation':
         relation = ML.Relation(None, key)
         relation.target_class_name = value['className']
         return relation
-
-    if _type == 'File':
-        f = ML.File(value['name'])
-        meta_data = value.get('metaData')
-        if meta_data:
-            f._metadata = meta_data
-        f._url = value['url']
-        f.id = ''
-        return f
 
 
 def traverse_object(obj, callback, seen=None):
@@ -138,7 +103,7 @@ def traverse_object(obj, callback, seen=None):
         traverse_object(obj.attributes, callback, seen)
         return callback(obj)
 
-    if isinstance(obj, (ML.Relation, ML.File)):
+    if isinstance(obj, (ML.Relation )):
         return callback(obj)
 
     if isinstance(obj, (list, tuple)):

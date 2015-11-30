@@ -9,7 +9,6 @@ MaxLeap-Python-SDK API 文档
 
 .. toctree::
 
-   ML.client
    ML.errors
    ML.object_
    ML.operation

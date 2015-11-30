@@ -40,10 +40,12 @@ class ObjectMeta(type):
 class Object(object):
     __metaclass__ = ObjectMeta
 
-    def __init__(self, **attrs):
+    def __init__(self, principal=None, **attrs):
         """
         创建一个新的 ML.Object
 
+        :param principal: 当前对象使用的Principal
+        :type class_name: UserPrincipal实例
         :param attrs: 对象属性
         :return:
         """
@@ -58,6 +60,7 @@ class Object(object):
 
         self.created_at = None
         self.updated_at = None
+        self.principal = principal
 
         for k, v in attrs.iteritems():
             self.set(k, v)
@@ -77,32 +80,36 @@ class Object(object):
         return type(name, (cls,), {})
 
     @classmethod
-    def create(cls, class_name, **attributes):
+    def create(cls, class_name, principal=None, **attributes):
         """
         根据参数创建一个 ML.Object 的子类的实例化对象
 
         :param class_name: 子类名称
         :type class_name: basestring
+        :param principal: 当前对象使用的Principal
+        :type principal: UserPrincipal实例
         :param attributes: 对象属性
         :return: 派生子类的实例
         :rtype: Object
         """
         object_class = cls.extend(class_name)
-        return object_class(**attributes)
+        return object_class(principal=principal, **attributes)
 
     @classmethod
-    def create_without_data(cls, id_):
+    def create_without_data(cls, id_, principal=None):
         """
         根据 objectId 创建一个 ML.Object，代表一个服务器上已经存在的对象。可以调用 fetch 方法来获取服务器上的数据
 
         :param id_: 对象的 objectId
         :type id_: basestring
+        :param principal: 当前对象使用的Principal
+        :type principal: UserPrincipal实例
         :return: 没有数据的对象
         :rtype: Object
         """
         if cls is Object:
             raise RuntimeError('can not call create_without_data on ML.Object')
-        obj = cls()
+        obj = cls(principal=principal)
         obj.id = id_
         return obj
 
@@ -133,7 +140,7 @@ class Object(object):
         """
         if not self.id:
             return False
-        client.delete('/classes/{0}/{1}'.format(self._class_name, self.id))
+        client.delete('/classes/{0}/{1}'.format(self._class_name, self.id), principal=self.principal)
 
     def save(self):
         """
@@ -157,9 +164,9 @@ class Object(object):
         method = 'PUT' if self.id is not None else 'POST'
 
         if method == 'PUT':
-            response = client.put('/classes/{0}/{1}'.format(self._class_name, self.id), data)
+            response = client.put('/classes/{0}/{1}'.format(self._class_name, self.id), data, principal=self.principal)
         else:
-            response = client.post('/classes/{0}'.format(self._class_name), data)
+            response = client.post('/classes/{0}'.format(self._class_name), data, principal=self.principal)
 
         self._finish_save(self.parse(utils.response_to_json(response), response.status_code))
 
@@ -190,7 +197,7 @@ class Object(object):
             dumped_objs.append(dumped_obj)
 
         if dumped_objs:
-            response = utils.response_to_json(client.post('/batch', params={'requests': dumped_objs}))
+            response = utils.response_to_json(client.post('/batch', params={'requests': dumped_objs}, principal=self.principal))
 
             errors = []
             for idx, obj in enumerate(unsaved_children):
@@ -213,11 +220,6 @@ class Object(object):
             if isinstance(o, Object):
                 if o.is_dirty():
                     children.append(o)
-                return
-
-            if isinstance(o, ML.File):
-                if o.url is None and o.id is None:
-                    files.append(o)
                 return
 
         utils.traverse_object(obj, callback)
@@ -275,8 +277,6 @@ class Object(object):
                 next_changes[key] = op1
 
     def validate(self, attrs):
-        if 'ACL' in attrs and not isinstance(attrs['ACL'], ML.ACL):
-            raise TypeError('acl must be a ACL')
         return True
 
     def get(self, attr):
@@ -425,7 +425,7 @@ class Object(object):
 
         :return: 当前对象
         """
-        response = client.get('/classes/{0}/{1}'.format(self._class_name, self.id), {})
+        response = client.get('/classes/{0}/{1}'.format(self._class_name, self.id), {}, principal=self.principal)
         result = self.parse(utils.response_to_json(response), response.status_code)
         self._finish_fetch(result, True)
 
@@ -446,25 +446,6 @@ class Object(object):
 
     def is_existed(self):
         return self._existed
-
-    def get_acl(self):
-        """
-        返回当前对象的 ACL。
-
-        :return: 当前对象的 ACL
-        :rtype: ML.ACL
-        """
-        return self.get('ACL')
-
-    def set_acl(self, acl):
-        """
-        为当前对象设置 ACL
-
-        :type acl: ML.ACL
-        :return: 当前对象
-        """
-
-        return self.set('ACL', acl)
 
     def _finish_save(self, server_data):
         saved_changes = self._op_set_queue[0]

@@ -1,8 +1,6 @@
 # coding: utf-8
 
 from ML import Object
-from ML import ACL
-from ML import GeoPoint
 from ML import utils
 
 __author__ = 'czhou <czhou@ilegendsoft.com>'
@@ -16,54 +14,6 @@ def test_encode():
         '__type': 'Pointer',
         'objectId': None,
     }
-
-    acl = ACL()
-    assert utils.encode(acl) == {}
-    acl.set_read_access('xxx', True)
-    assert utils.encode(acl) == {'xxx': {'read': True}}
-
-    point = GeoPoint()
-    assert utils.encode(point) == {
-        '__type': 'GeoPoint',
-        'longitude': 0,
-        'latitude': 0,
-    }
-
-    assert utils.encode([obj, acl, point]) == [
-        {
-            'className': 'Foo',
-            '__type': 'Pointer',
-            'objectId': None,
-        }, {
-            'xxx': {'read': True}
-        }, {
-            '__type': 'GeoPoint',
-            'longitude': 0,
-            'latitude': 0,
-        }
-    ]
-
-    assert utils.encode({'a': obj, 'b': acl}) == {
-        'a': {
-            'className': 'Foo',
-            '__type': 'Pointer',
-            'objectId': None,
-        },
-        'b': {
-            'xxx': {'read': True}
-        },
-    }
-
-
-def test_decode():
-    p = utils.decode('test_key', {
-        '__type': 'GeoPoint',
-        'longitude': 0,
-        'latitude': 0,
-    })
-    assert isinstance(p, GeoPoint)
-    assert p.latitude == 0
-    assert p.longitude == 0
 
 
 def test_util():

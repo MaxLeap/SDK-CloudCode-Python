@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import json
+import copy
 
 import requests
 requests.packages.urllib3.disable_warnings()
@@ -10,21 +11,71 @@ from ML import utils
 
 __author__ = 'czhou <czhou@ilegendsoft.com>'
 
-
 APP_ID = None
-CLIENT_KEY = None
-MASTER_KEY = None
 BY_HOOK = None
 
-CN_BASE_URL = 'https://api.leap.as'
-CN_BASE_URL = 'https://api.leap.as'
+US_BASE_URL = 'https://api.leap.as'
+CN_BASE_URL = 'https://api.leapcloud.cn'
+UAT_BASE_URL = 'http://apiuat.leap.as'
+DEV_BASE_URL = 'http://apidev.leap.as'
+INNER_BASE_URL = 'http://api.las'
 
 SERVER_VERSION = '2.0'
 SDK_VERSION = '1.0.0'
-BASE_URL = CN_BASE_URL + '/' + SERVER_VERSION
-TIMEOUT_SECONDS = 15
+BASE_URL = US_BASE_URL + '/' + SERVER_VERSION
+TIMEOUT_SECONDS = 60
 
-headers = None
+MASTER_USER_PRINCIPAL = None
+
+def get_master_principal():
+    return MASTER_USER_PRINCIPAL
+
+class UserPrincipal(object):
+    """docstring for UserPrincipal"""
+    def __init__(self, app_id, client_key=None, master_key=None, session_token=None):
+        super(UserPrincipal, self).__init__()
+        self.app_id = app_id
+        self.client_key = client_key
+        self.master_key = master_key
+        self.session_token = session_token
+        self.headers = {
+            'Content-Type':'application/json;charset=utf-8',
+            'User-Agent':'MaxLeap Code Python-{0}SDK'.format(ML.__version__)
+        }
+        self.validate()
+
+    def validate(self):
+        if not any([self.client_key, self.master_key, self.session_token]):
+            raise RuntimeError('client_key or master_key or session_token must be specified')
+        if not self.app_id:
+            raise RuntimeError('app_id must be specified')
+
+    def gen_headers(self):
+        self.headers['X-LAS-AppId'] = self.app_id
+        if self.master_key:
+            self.headers['X-LAS-MasterKey'] = self.master_key
+        elif self.client_key:
+            self.headers['X-LAS-APIKey'] = self.client_key
+        elif self.session_token:
+            self.headers['X-LAS-Session-Token'] = self.session_token
+        return self.headers
+
+    def injection(self,headers):
+        self.headers.update(headers)
+
+
+def change_region(region='us'):
+    global BASE_URL
+    if region == 'us':
+        BASE_URL = US_BASE_URL + '/' + SERVER_VERSION
+    if region == 'cn':
+        BASE_URL = CN_BASE_URL + '/' + SERVER_VERSION
+    if region == 'uat':
+        BASE_URL = UAT_BASE_URL + '/' + SERVER_VERSION
+    if region == 'dev':
+        BASE_URL = DEV_BASE_URL + '/' + SERVER_VERSION
+    if region == 'inner':
+        BASE_URL = INNER_BASE_URL + '/' + SERVER_VERSION
 
 def by_hook(flag):
     """
@@ -35,7 +86,7 @@ def by_hook(flag):
     BY_HOOK = flag
 
 
-def init(app_id, client_key=None, master_key=None):
+def init(app_id, client_key=None, master_key=None, region='us'):
     """初始化 MaxLeap 的 AppId / REST API Key / MasterKey
 
     :type app_id: basestring
@@ -47,34 +98,20 @@ def init(app_id, client_key=None, master_key=None):
     """
     if (not client_key) and (not master_key):
         raise RuntimeError('client_key or master_key must be specified')
-    global APP_ID, CLIENT_KEY, MASTER_KEY
+    global MASTER_USER_PRINCIPAL, APP_ID
     APP_ID = app_id
-    CLIENT_KEY = client_key
-    MASTER_KEY = master_key
+    MASTER_USER_PRINCIPAL = UserPrincipal(app_id, client_key=client_key, master_key=master_key)
+    change_region(region)
 
 
 def need_init(func):
     def new_func(*args, **kwargs):
-        if APP_ID is None:
+        if MASTER_USER_PRINCIPAL is None:
             raise RuntimeError('MaxLeap SDK must be initialized')
-
-        global headers
-        if not headers:
-            headers = {
-                'Content-Type': 'application/json;charset=utf-8',
-            }
-        headers['Content-Type'] = 'application/json'
-        headers['X-LAS-AppId'] = APP_ID
-        headers['User-Agent'] = 'MaxLeap Code Python-{0}SDK'.format(ML.__version__)
-        if MASTER_KEY:
-            headers['X-LAS-MasterKey'] = MASTER_KEY
-        else:
-            headers['X-LAS-APIKey'] = CLIENT_KEY
-
+        if not kwargs.get('principal'):
+            kwargs['principal'] = ML.get_principal() or copy.deepcopy(MASTER_USER_PRINCIPAL)
         if BY_HOOK:
-            headers['X-ZCloud-Request-From-Cloudcode'] = "true"
-        else:
-            headers['X-ZCloud-Request-From-Cloudcode'] = "false"
+            kwargs['principal'].injection({'X-ZCloud-Request-From-Cloudcode':'true'})
         return func(*args, **kwargs)
     return new_func
 
@@ -126,7 +163,7 @@ def handler_hook(method):
 
                 if method == "delete":
                     BY_HOOK = True
-                    res = ML.Server._handel_hook(class_name, method, {"objectId": obj_id})
+                    res = ML.Server._handel_hook(class_name, method, obj_id)
                     BY_HOOK = False
                     return res
 
@@ -137,30 +174,30 @@ def handler_hook(method):
 
 @need_init
 @check_error
-def get(url, params):
+def get(url, params, principal=None):
     for k, v in params.iteritems():
         if isinstance(v, dict):
             params[k] = json.dumps(v)
-    response = requests.get(BASE_URL + url, headers=headers, params=params, timeout=TIMEOUT_SECONDS, verify=False)
+    response = requests.get(BASE_URL + url, headers=principal.gen_headers(), params=params, timeout=TIMEOUT_SECONDS, verify=False)
     return response
 
 @need_init
 @check_error
 @handler_hook('create')
-def post(url, params):
-    response = requests.post(BASE_URL + url, headers=headers, data=json.dumps(params), timeout=TIMEOUT_SECONDS, verify=False)
+def post(url, params, principal=None):
+    response = requests.post(BASE_URL + url, headers=principal.gen_headers(), data=json.dumps(params), timeout=TIMEOUT_SECONDS, verify=False)
     return response
 
 @need_init
 @check_error
 @handler_hook('update')
-def put(url, params):
-    response = requests.put(BASE_URL + url, headers=headers, data=json.dumps(params), timeout=TIMEOUT_SECONDS, verify=False)
+def put(url, params, principal=None):
+    response = requests.put(BASE_URL + url, headers=principal.gen_headers(), data=json.dumps(params), timeout=TIMEOUT_SECONDS, verify=False)
     return response
 
 @need_init
 @check_error
 @handler_hook('delete')
-def delete(url, params=None):
-    response = requests.delete(BASE_URL + url, headers=headers, data=json.dumps(params), timeout=TIMEOUT_SECONDS, verify=False)
+def delete(url, params=None, principal=None):
+    response = requests.delete(BASE_URL + url, headers=principal.gen_headers(), data=json.dumps(params), timeout=TIMEOUT_SECONDS, verify=False)
     return response

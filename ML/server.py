@@ -15,6 +15,24 @@ Host = '127.0.0.1'
 
 app = Flask(__name__)
 
+def get_principal():
+    if not ML.PRO:
+        return None
+    str_user_principal = request.headers.get('ML-User-Principal',None)
+    if not str_user_principal:
+        raise RuntimeError("You can't use server sdk without UserPrincipal")
+    json_user_principal = json.loads(str_user_principal)
+    session_token = None
+    master_key = None
+    client_key = None
+    if json_user_principal.get('identityType') in ["ORG_USER", "APP_USER"]:
+        session_token = json_user_principal.get('sessionToken')
+    if json_user_principal.get('identityType') in ["MASTER_KEY"]:
+        master_key = json_user_principal.get('key')
+    if json_user_principal.get('identityType') in ["API_KEY"]:
+        client_key = json_user_principal.get('key')
+    return ML.UserPrincipal(ML.client.APP_ID, client_key=client_key, master_key=master_key, session_token=session_token)
+
 @app.after_request
 def after_request(response):
     ML.Log.debug("===========Request End===============")
@@ -24,8 +42,8 @@ def after_request(response):
 def before_request():
     ML.Log.debug("===========Request Start=============")
     ML.Log.debug("Method:{0}".format(request.method))
-    ML.Log.debug("Headers:\n{0}".format(request.headers))
-    ML.Log.debug("Body:{0}".format(request.data))
+    ML.Log.info("Headers:\n{0}".format(request.headers))
+    ML.Log.info("Body:{0}".format(request.data))
 
 @app.errorhandler(500)
 def custom_error(e):
@@ -146,6 +164,7 @@ class flask_base_server(object):
     def _handel_hook(self, class_name, method, params):
 
         if method == 'create':
+            params['principal'] = get_principal()
             obj = ML.Object.create(class_name,**params)
 
             if 'before_save_{}'.format(class_name) in self._hook_map:
@@ -169,6 +188,7 @@ class flask_base_server(object):
             attrs = {}
             attrs['objectId'] = params['objectId']
             attrs.update(params['update'])
+            attrs['principal'] = get_principal()
             obj = ML.Object.create(class_name,**attrs)
             obj.save()
             res = Response(json.dumps({
@@ -183,7 +203,10 @@ class flask_base_server(object):
                 if isinstance(hook_res, Response):return hook_res
 
         elif method == 'delete':
-            obj = ML.Object.create(class_name,**params)
+            attrs = {}
+            attrs['objectId'] = params
+            attrs['principal'] = get_principal()
+            obj = ML.Object.create(class_name,**attrs)
             if 'before_delete_{}'.format(class_name) in self._hook_map:
                 hook_res = self._hook_map['before_delete_{}'.format(class_name)](obj)
                 if isinstance(hook_res, Response): return hook_res
