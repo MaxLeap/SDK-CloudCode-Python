@@ -13,8 +13,8 @@ from .server import Server, get_principal
 from .log import Log
 from flask import Response
 
-__author__ = 'czhou <czhou@ilegendsoft.com>'
-__version__ = '0.1.16'
+__author__ = 'czhou <czhou@maxleap.com>'
+__version__ = '0.2.0'
 DEBUG = True
 PRO = False
 
