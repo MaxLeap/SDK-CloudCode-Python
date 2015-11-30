@@ -49,8 +49,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'MaxLeap-Python-SDK'
-copyright = u'2015, czhou'
-author = u'czhou'
+copyright = u'2015, MaxLeap'
+author = u'maxleap'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -225,7 +225,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
   (master_doc, 'MaxLeap-Python-SDK.tex', u'MaxLeap-Python-SDK Documentation',
-   u'czhou', 'manual'),
+   u'maxleap', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -254,7 +254,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'maxleap-python-sdk', u'MaxLeap-Python-SDK Documentation',
+    (master_doc, 'maxleap-sdk', u'MaxLeap-Python-SDK Documentation',
      [author], 1)
 ]
 

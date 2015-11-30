@@ -5,7 +5,7 @@ here = path.abspath(path.dirname(__file__))
 
 setup(
     name='maxleap-sdk',
-    version='0.1.1',
+    version='0.2.0',
     description='MaxLeap Python SDK',
 
     url='https://leap.as/',
@@ -36,7 +36,7 @@ setup(
     test_suite='nose.collector',
 
     install_requires=[
-        'requests',
+        'requests>=2.4.3',
         'iso8601',
         'arrow',
         'flask',

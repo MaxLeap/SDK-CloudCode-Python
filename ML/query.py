@@ -12,11 +12,13 @@ __author__ = 'czhou <czhou@ilegendsoft.com>'
 
 
 class Query(object):
-    def __init__(self, query_class):
+    def __init__(self, query_class, principal=None):
         """
 
         :param query_class: 要查询的 class 名称或者对象
         :type query_class: basestring or ML.ObjectMeta
+        :param principal: 当前对象使用的Principal
+        :type class_name: UserPrincipal实例
         """
         if isinstance(query_class, basestring):
             query_class = Object.extend(query_class)
@@ -29,6 +31,7 @@ class Query(object):
         self._extra = {}
         self._order = []
         self._select = []
+        self.principal = principal
 
     @classmethod
     def or_(cls, *queries):
@@ -85,7 +88,7 @@ class Query(object):
         return params
 
     def _new_object(self):
-        return self._query_class()
+        return self._query_class(principal=self.principal)
 
     def _process_result(self, obj):
         return obj
@@ -100,7 +103,7 @@ class Query(object):
         """
         params = self.dump()
         params['limit'] = 1
-        content = utils.response_to_json(client.get('/classes/{0}'.format(self._query_class._class_name), params))
+        content = utils.response_to_json(client.get('/classes/{0}'.format(self._query_class._class_name), params, principal=self.principal))
         results = content['results']
         if not results:
             raise MaxLeapError(101, 'Object not found')
@@ -125,7 +128,7 @@ class Query(object):
 
         :rtype: list
         """
-        content = utils.response_to_json(client.get('/classes/{0}'.format(self._query_class._class_name), self.dump()))
+        content = utils.response_to_json(client.get('/classes/{0}'.format(self._query_class._class_name), self.dump(), principal=self.principal))
 
         objs = []
         for result in content['results']:
@@ -141,7 +144,7 @@ class Query(object):
 
         :raise: MaxLeapError
         """
-        result = client.delete('/classes/{0}'.format(self._query_class._class_name), self.dump())
+        result = client.delete('/classes/{0}'.format(self._query_class._class_name), self.dump(), principal=self.principal)
         return result
 
     def count(self):
@@ -153,7 +156,7 @@ class Query(object):
         params = self.dump()
         params['limit'] = 0
         params['count'] = 1
-        response = client.get('/classes/{0}'.format(self._query_class._class_name), params)
+        response = client.get('/classes/{0}'.format(self._query_class._class_name), params, principal=self.principal)
         return utils.response_to_json(response)['count']
 
     def skip(self, n):
@@ -552,4 +555,3 @@ class Query(object):
             keys = keys[0]
         self._select += keys
         return self
-
